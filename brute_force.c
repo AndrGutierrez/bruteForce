@@ -25,12 +25,15 @@ bool brute_force_md5(const char *target_hash, int length) {
   unsigned char digest[EVP_MAX_MD_SIZE];
   unsigned int digest_len;
 
-  int j = 0;
+  // cada hilo buscará 1242497
   while (!found) {
-    j++;
 
     for (int i = 0; i < length; i++) {
       guess[i] = charset[indices[i]];
+      // TODO: cada hilo buscará 1242497
+      // aca están como los numeros de letra a los que accede, usa esto para
+      // dividir el trabajo
+      printf("#### %d\n", indices[i]);
     }
     guess[length] = '\0';
 
@@ -58,11 +61,11 @@ bool brute_force_md5(const char *target_hash, int length) {
       pos++;
     }
 
+    // printf("#### %d\n", pos);
     if (pos == length)
       break;
   }
 
-  printf("Intentos %d", j);
   EVP_MD_CTX_free(ctx);
   free(guess);
   free(indices);
@@ -90,3 +93,11 @@ bool brute_force(int argc, char *argv[]) {
   printf("Password not found for lengths 1-%d\n", MAX_LENGTH);
   return 1;
 }
+
+void *test(void *begin) {
+  int i, start;
+  start = *((int *)begin); // 64 bits
+  for (int i = start; i <= 10; i++) {
+    printf("%d \n", i);
+  }
+};

@@ -1,3 +1,4 @@
+#include "brute_force.h"
 #include <pthread.h> //<-- liberia de POSIX para crear Hilos
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,14 +27,14 @@ int semaforo(int argc, char *argv[]) {
   // Inicializa el semaforo
   pthread_mutex_init(&mutex_acceso, NULL);
   // Crear la hebra
-  pthread_create(&tid1, &attr, runner, &numero);
-  pthread_create(&tid2, &attr, runner, &numero);
+  pthread_create(&tid1, &attr, test, &numero);
+  pthread_create(&tid2, &attr, test, &numero);
   // Espera a que las hebras termine
   pthread_join(tid1, NULL);
   pthread_join(tid2, NULL);
   // sum /=2 ; //Arreglar para que cada hilo funcione correctamente y evitar
   // esta linea
-  printf("sum= %d\n", sum);
+  // printf("sum= %d\n", sum);
 }
 
 /*La hebra inicia su ejecución en esta función*/

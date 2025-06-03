@@ -1,1 +1,1 @@
-gcc main.c brute_force.c -o decrypt.out -lssl -lcrypto
+gcc main.c brute_force.c semaforo.c -o decrypt.out -lssl -lcrypto
