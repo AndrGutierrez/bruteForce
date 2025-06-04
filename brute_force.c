@@ -87,12 +87,12 @@ bool brute_force_md5(const char *target_hash, int length, int *guesses,
 
     // printf("%d \n", *guesses);
     // printf("%d, %d, %d\n", *guesses % batch_size, *guesses, batch_size);
-    if ((*guesses % batch_size) == 0) {
+    if ((*guesses % 1242497) == 0) {
       // printf("### %d\n", *guesses);
       // printf("### %s\n", guess);
       // // printf("%d, %d\n", *guesses, start);
-      // printf("#### %d %d %d %d\n", guess_number[0], guess_number[1],
-      //        guess_number[2], guess_number[3]);
+      printf("#### %d %d %d %d\n", guess_number[0], guess_number[1],
+             guess_number[2], guess_number[3]);
       // // }
       break;
     }
