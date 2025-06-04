@@ -4,11 +4,13 @@
 #include <stdbool.h>
 typedef struct {
   char **argv;    // or int numero; if you only need the parsed number
-  int breakpoint; // the breakpoint value to pass
+  int batch_size; // the breakpoint value to pass
+  int start[4];   // the breakpoint value to pass
 } ThreadArgs;
 
 void *test(void *begin);
-bool brute_force_md5(const char *target_hash, int length, int *guesses);
+bool brute_force_md5(const char *target_hash, int length, int *guesses,
+                     int batch_size, int start[4]);
 /*void brute_force(void *argv[]);*/
 void *brute_force(void *arg);
 
