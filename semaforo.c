@@ -1,6 +1,5 @@
 #include "brute_force.h"
 #include <pthread.h> //<-- liberia de POSIX para crear Hilos
-#include <stdio.h>
 #include <stdlib.h>
 
 // Librerías globales que comparten los hilos
@@ -20,12 +19,6 @@ int semaforo(char *argv[]) {
   pthread_t tid1, tid2; // identificador de las hebras
   pthread_attr_t attr;  // conjunto de atributos de la hebra
 
-  // numero = atoi(argv[1]);
-  // if (numero < 0) {
-  //   fprintf(stderr, "%d debe ser >=0\n", numero);
-  //   return -1;
-  // }
-
   // Prepare thread arguments
   ThreadArgs batch1;
   batch1.argv = argv; // Pass the entire argv (or just args.numero = numero;)
@@ -42,10 +35,10 @@ int semaforo(char *argv[]) {
   // Crear la hebra
 
   pthread_create(&tid1, &attr, brute_force, (void *)&batch1);
-  // pthread_create(&tid2, &attr, brute_force, (void *)&batch2);
+  pthread_create(&tid2, &attr, brute_force, (void *)&batch2);
   // Espera a que las hebras termine
   pthread_join(tid1, NULL);
-  // pthread_join(tid2, NULL);
+  pthread_join(tid2, NULL);
   // sum /=2 ; //Arreglar para que cada hilo funcione correctamente y evitar
   // esta linea
   // printf("sum= %d\n", sum);

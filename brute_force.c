@@ -82,10 +82,6 @@ void *brute_force(void *param) {
   char **argv = args->argv;
   int breakpoint = args->breakpoint; // Unused (just for testing)
 
-  clock_t start, end;
-  double cpu_time_used;
-  start = clock();
-
   const char *target_hash = argv[1];
   printf("Attempting to brute force MD5 hash: %s\n", target_hash);
   printf("Breakpoint received (unused): %d\n", breakpoint); // Debug print
@@ -94,9 +90,6 @@ void *brute_force(void *param) {
   for (int length = 1; length <= MAX_LENGTH; length++) {
     printf("Trying passwords of length %d...\n", length);
     if (brute_force_md5(target_hash, length, &guesses)) {
-      end = clock();
-      cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
-      printf("Brute force took %.2f seconds\n", cpu_time_used);
       printf("### %d", guesses);
       pthread_exit(0); // Exit thread on success
     }
