@@ -1,6 +1,6 @@
 #ifndef SEMAFORO_H
 #define SEMAFORO_H
 
-int semaforo(int argc, char *argv[]);
+int semaforo(char *argv[]);
 
 #endif

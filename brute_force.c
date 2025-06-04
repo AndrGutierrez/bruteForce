@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>    // Add this include at the top
 #define MAX_LENGTH 4 // Maximum password length to try
+#include "brute_force.h"
 
 bool brute_force_md5(const char *target_hash, int length) {
   const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -72,26 +74,31 @@ bool brute_force_md5(const char *target_hash, int length) {
   return found;
 }
 
-bool brute_force(int argc, char *argv[]) {
+void *brute_force(void *param) {
+  ThreadArgs *args = (ThreadArgs *)param;
+  char **argv = args->argv;
+  int breakpoint = args->breakpoint; // Unused (just for testing)
 
-  if (argc != 2) {
-    fprintf(stderr, "Usage: %s <md5_hash>\n", argv[0]);
-    return 1;
-  }
+  clock_t start, end;
+  double cpu_time_used;
+  start = clock();
 
   const char *target_hash = argv[1];
-
   printf("Attempting to brute force MD5 hash: %s\n", target_hash);
+  printf("Breakpoint received (unused): %d\n", breakpoint); // Debug print
 
   for (int length = 1; length <= MAX_LENGTH; length++) {
     printf("Trying passwords of length %d...\n", length);
     if (brute_force_md5(target_hash, length)) {
-      return 0;
+      end = clock();
+      cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+      printf("Brute force took %.2f seconds\n", cpu_time_used);
+      pthread_exit(0); // Exit thread on success
     }
   }
 
   printf("Password not found for lengths 1-%d\n", MAX_LENGTH);
-  return 1;
+  pthread_exit((void *)1); // Exit thread on failure
 }
 
 void *test(void *begin) {
