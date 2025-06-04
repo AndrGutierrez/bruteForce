@@ -26,20 +26,23 @@ int semaforo(char *argv[]) {
   //   return -1;
   // }
 
-  int selected_breakpoint = breakpoints[1]; // Choose the appropriate breakpoint
-
   // Prepare thread arguments
-  ThreadArgs args;
-  args.argv = argv; // Pass the entire argv (or just args.numero = numero;)
-  args.breakpoint = selected_breakpoint;
+  ThreadArgs batch1;
+  batch1.argv = argv; // Pass the entire argv (or just args.numero = numero;)
+  batch1.breakpoint = breakpoints[0];
+  ThreadArgs batch2;
+
+  batch2.argv = argv; // Pass the entire argv (or just args.numero = numero;)
+  batch2.breakpoint = breakpoints[1];
+
   // Obtener los atributos predeterminados
   pthread_attr_init(&attr);
   // Inicializa el semaforo
   pthread_mutex_init(&mutex_acceso, NULL);
   // Crear la hebra
 
-  pthread_create(&tid1, &attr, brute_force, (void *)&args);
-  // pthread_create(&tid2, &attr, test, &numero);
+  pthread_create(&tid1, &attr, brute_force, (void *)&batch1);
+  // pthread_create(&tid2, &attr, brute_force, (void *)&batch2);
   // Espera a que las hebras termine
   pthread_join(tid1, NULL);
   // pthread_join(tid2, NULL);

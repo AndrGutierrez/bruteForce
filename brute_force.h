@@ -8,7 +8,7 @@ typedef struct {
 } ThreadArgs;
 
 void *test(void *begin);
-bool brute_force_md5(const char *target_hash, int length);
+bool brute_force_md5(const char *target_hash, int length, int *guesses);
 /*void brute_force(void *argv[]);*/
 void *brute_force(void *arg);
 

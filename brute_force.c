@@ -7,7 +7,7 @@
 #define MAX_LENGTH 4 // Maximum password length to try
 #include "brute_force.h"
 
-bool brute_force_md5(const char *target_hash, int length) {
+bool brute_force_md5(const char *target_hash, int length, int *guesses) {
   const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const int charset_size = sizeof(charset) - 1;
 
@@ -35,10 +35,13 @@ bool brute_force_md5(const char *target_hash, int length) {
       // TODO: cada hilo buscará 1242497
       // aca están como los numeros de letra a los que accede, usa esto para
       // dividir el trabajo
-      printf("#### %d\n", indices[i]);
+      // printf("#### %d\n", indices[i]);
     }
     guess[length] = '\0';
+    *guesses += 1;
+    // printf("%d \n", guesses);
 
+    // printf("### %s\n", guess);
     EVP_DigestInit_ex(ctx, md, NULL);
     EVP_DigestUpdate(ctx, guess, strlen(guess));
     EVP_DigestFinal_ex(ctx, digest, &digest_len);
@@ -87,12 +90,14 @@ void *brute_force(void *param) {
   printf("Attempting to brute force MD5 hash: %s\n", target_hash);
   printf("Breakpoint received (unused): %d\n", breakpoint); // Debug print
 
+  int guesses = 0;
   for (int length = 1; length <= MAX_LENGTH; length++) {
     printf("Trying passwords of length %d...\n", length);
-    if (brute_force_md5(target_hash, length)) {
+    if (brute_force_md5(target_hash, length, &guesses)) {
       end = clock();
       cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
       printf("Brute force took %.2f seconds\n", cpu_time_used);
+      printf("### %d", guesses);
       pthread_exit(0); // Exit thread on success
     }
   }
