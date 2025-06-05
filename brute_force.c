@@ -70,7 +70,7 @@ bool brute_force_md5(const char *target_hash, int length, int *guesses,
     }
 
     if (strcmp(md5_str, target_hash) == 0) {
-      printf("\nFound match: %s\n", guess);
+      // printf("\nFound match: %s\n", guess);
       save_password(username, guess); // Guarda la contraseña encontrada
       atomic_store(&found, true);
       break;
