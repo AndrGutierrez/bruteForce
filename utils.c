@@ -70,30 +70,6 @@ int read_user_hashes(const char *filename, UserHash **users, int *count) {
   return 0;
 }
 
-void process_user_hashes(UserHash *users, int count) {
-  for (int i = 0; i < count; i++) {
-    struct timeval start, end;
-    gettimeofday(&start, NULL);
-
-    printf("\nProcessing password for user: %s\n", users[i].username);
-
-    char *fake_argv[] = {"", users[i].hash};
-
-    int result = semaforo(fake_argv);
-
-    gettimeofday(&end, NULL);
-    double time_taken =
-        (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1e6;
-
-    print_processing_time(users[i].username, time_taken);
-
-    if (result != 0) {
-      printf("Warning: semaforo returned non-zero status for user %s\n",
-             users[i].username);
-    }
-  }
-}
-
 void print_processing_time(const char *username, double time_taken) {
   printf("Completed user '%s' in %.6f seconds\n", username, time_taken);
 }
