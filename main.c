@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   gettimeofday(&end, NULL);
   double time_taken_us =
       (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1e6;
-  printf("Brute force took %.6f seconds (high precision)\n", time_taken_us);
+  printf("Brute force took %.6f seconds \n", time_taken_us);
 
   return 0;
 }
