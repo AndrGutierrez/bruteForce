@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     printf("Processing password for user: %s\n", users[i].username);
 
     /* semaforo expects argv[1] to be the hash */
-    char *fake_argv[] = {"", users[i].hash};
+    char *fake_argv[] = {users[i].username, users[i].hash};
     semaforo(fake_argv); /* This will block until all threads finish */
 
     gettimeofday(&end, NULL);

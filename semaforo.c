@@ -1,6 +1,7 @@
 #include "brute_force.h"
 #include <pthread.h>
 #include <stdlib.h>
+#include <string.h>
 
 int sum = 0, numero;
 pthread_mutex_t mutex_acceso;
@@ -24,9 +25,16 @@ int semaforo(char *argv[]) {
   // Reset found to false before starting threads
   atomic_store(&found, false);
 
+  // El nombre de usuario está en argv[0] (esto cambiará según cómo lo llames)
+  const char *username = argv[0];
+
   for (int i = 0; i < NUM_THREADS; i++) {
-    thread_args[i].argv = argv;
+    thread_args[i].argv = &argv[1]; // El hash está en argv[1]
     thread_args[i].batch_size = BATCH_SIZE;
+    strncpy(thread_args[i].username, username,
+            sizeof(thread_args[i].username) - 1);
+    thread_args[i].username[sizeof(thread_args[i].username) - 1] = '\0';
+
     for (int j = 0; j < 4; j++) {
       thread_args[i].start[j] = BREAKPOINTS[i][j];
     }

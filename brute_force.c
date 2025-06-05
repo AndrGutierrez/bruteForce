@@ -10,8 +10,18 @@
 #include <stdatomic.h>
 atomic_bool found = ATOMIC_VAR_INIT(false);
 
+void save_password(const char *username, const char *password) {
+  FILE *file = fopen("passwords_found.txt", "a"); // 'a' para append
+  if (file) {
+    fprintf(file, "%s %s\n", username, password);
+    fclose(file);
+  } else {
+    perror("Error opening passwords_found.txt");
+  }
+}
 bool brute_force_md5(const char *target_hash, int length, int *guesses,
-                     int batch_size, int start[4]) {
+                     int batch_size, int start[4],
+                     const char *username) { // Añade username
   const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const int charset_size = sizeof(charset) - 1;
 
@@ -61,6 +71,12 @@ bool brute_force_md5(const char *target_hash, int length, int *guesses,
 
     if (strcmp(md5_str, target_hash) == 0) {
       printf("\nFound match: %s\n", guess);
+      save_password(username, guess); // Guarda la contraseña encontrada
+      atomic_store(&found, true);
+      break;
+    }
+    if (strcmp(md5_str, target_hash) == 0) {
+      printf("\nFound match: %s\n", guess);
       atomic_store(&found, true);
       break;
     }
@@ -94,11 +110,14 @@ void *brute_force(void *param) {
   char **argv = args->argv;
   int batch_size = args->batch_size;
   int start[4];
+  char username[256];
+  strcpy(username, args->username);
+
   for (int i = 0; i < 4; i++) {
     start[i] = args->start[i];
   }
 
-  const char *target_hash = argv[1];
+  const char *target_hash = argv[0]; // Ahora el hash está en argv[0]
   int guesses = 0;
   int init = (start[0] == 0 && start[1] == 0 && start[2] == 0 && start[3] == 0)
                  ? 1
@@ -106,7 +125,7 @@ void *brute_force(void *param) {
 
   for (int length = init; length <= MAX_LENGTH && !atomic_load(&found);
        length++) {
-    brute_force_md5(target_hash, length, &guesses, batch_size, start);
+    brute_force_md5(target_hash, length, &guesses, batch_size, start, username);
   }
 
   pthread_exit(NULL);
