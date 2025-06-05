@@ -5,10 +5,29 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+void print_header(const char *text) {
+  printf("\n=============================================\n");
+  printf("          %s\n", text);
+  printf("=============================================\n\n");
+}
+
+void print_footer(const char *text) {
+  printf("\n----------------------------------------\n");
+  printf("  %s\n", text);
+  printf("----------------------------------------\n\n");
+}
+
 int main(int argc, char *argv[]) {
   if (argc != 2) {
-    fprintf(stderr, "Usage: %s <password_file>\n", argv[0]);
+    fprintf(stderr, "\n[!] Usage: %s <password_file>\n", argv[0]);
     return 1;
+  }
+
+  print_header("PASSWORD CRACKER INITIALIZATION");
+  if (remove("passwords_found.txt") == 0) {
+    printf("[+] Cleared previous results: passwords_found.txt\n");
+  } else {
+    printf("[*] Starting fresh output file: passwords_found.txt\n");
   }
 
   UserHash *users = NULL;
@@ -18,24 +37,24 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
+  print_header("CRACKING PASSWORDS");
   for (int i = 0; i < user_count; i++) {
     struct timeval start, end;
     gettimeofday(&start, NULL);
 
-    printf("Processing password for user: %s\n", users[i].username);
+    printf("=== Processing: %-20s ===\n", users[i].username);
 
-    /* semaforo expects argv[1] to be the hash */
     char *fake_argv[] = {users[i].username, users[i].hash};
-    semaforo(fake_argv); /* This will block until all threads finish */
+    semaforo(fake_argv);
 
     gettimeofday(&end, NULL);
     double time_taken =
         (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1e6;
 
-    printf("Brute force for user '%s' took %.6f seconds\n", users[i].username,
-           time_taken);
+    printf("=> Completed in: %.6f seconds\n\n", time_taken);
   }
 
+  print_footer("RESULTS SAVED TO: passwords_found.txt");
   free(users);
   return 0;
 }

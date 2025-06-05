@@ -14,7 +14,6 @@ int read_user_hashes(const char *filename, UserHash **users, int *count) {
     return -1;
   }
 
-  // First count the number of lines
   int lines = 0;
   char buffer[512];
   while (fgets(buffer, sizeof(buffer), file)) {
@@ -29,7 +28,14 @@ int read_user_hashes(const char *filename, UserHash **users, int *count) {
     return -1;
   }
 
-  // Allocate memory
+  if (lines > 50) {
+    fclose(file);
+    fprintf(stderr,
+            "Error: Input file contains %d entries, maximum allowed is 50\n",
+            lines);
+    return -1;
+  }
+
   *users = malloc(lines * sizeof(UserHash));
   if (!*users) {
     fclose(file);
@@ -37,7 +43,6 @@ int read_user_hashes(const char *filename, UserHash **users, int *count) {
     return -1;
   }
 
-  // Rewind and read data
   rewind(file);
   int i = 0;
   while (fgets(buffer, sizeof(buffer), file)) {
@@ -45,7 +50,7 @@ int read_user_hashes(const char *filename, UserHash **users, int *count) {
     if (!sep)
       continue;
 
-    *sep = '\0'; // Split the string at ::
+    *sep = '\0';
     strncpy((*users)[i].username, buffer, sizeof((*users)[i].username) - 1);
     (*users)[i].username[sizeof((*users)[i].username) - 1] = '\0';
 
@@ -72,10 +77,8 @@ void process_user_hashes(UserHash *users, int count) {
 
     printf("\nProcessing password for user: %s\n", users[i].username);
 
-    // Prepare arguments for semaforo (it expects argv[1] to be the hash)
     char *fake_argv[] = {"", users[i].hash};
 
-    // Call semaforo with the hash - this will block until complete
     int result = semaforo(fake_argv);
 
     gettimeofday(&end, NULL);
@@ -84,7 +87,6 @@ void process_user_hashes(UserHash *users, int count) {
 
     print_processing_time(users[i].username, time_taken);
 
-    // Print result if needed
     if (result != 0) {
       printf("Warning: semaforo returned non-zero status for user %s\n",
              users[i].username);
