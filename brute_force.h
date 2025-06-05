@@ -13,5 +13,7 @@ bool brute_force_md5(const char *target_hash, int length, int *guesses,
                      int batch_size, int start[4]);
 /*void brute_force(void *argv[]);*/
 void *brute_force(void *arg);
+#include <stdatomic.h>
+extern atomic_bool found;
 
 #endif

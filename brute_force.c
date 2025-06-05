@@ -48,6 +48,7 @@ bool brute_force_md5(const char *target_hash, int length, int *guesses,
     }
     guess[length] = '\0';
     (*guesses)++;
+    // printf("%s \n", guess);
 
     EVP_DigestInit_ex(ctx, md, NULL);
     EVP_DigestUpdate(ctx, guess, strlen(guess));
@@ -76,7 +77,8 @@ bool brute_force_md5(const char *target_hash, int length, int *guesses,
     if (pos == length)
       break;
 
-    if ((*guesses % batch_size) == 0 && atomic_load(&found)) {
+    // printf("%d, %d \n", *guesses, batch_size);
+    if ((*guesses % batch_size) == 0) {
       break;
     }
   }

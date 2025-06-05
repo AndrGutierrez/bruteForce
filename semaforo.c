@@ -6,7 +6,7 @@ int sum = 0, numero;
 pthread_mutex_t mutex_acceso;
 
 const int NUM_THREADS = 6;
-const int BATCH_SIZE = 12424967;
+const int BATCH_SIZE = 1242497;
 const int BREAKPOINTS[6][4] = {{0, 0, 0, 0},     {8, 25, 42, 7},
                                {17, 51, 33, 16}, {35, 51, 16, 34},
                                {26, 25, 25, 25}, {44, 25, 8, 43}};
@@ -19,8 +19,10 @@ int semaforo(char *argv[]) {
   ThreadArgs thread_args[NUM_THREADS];
 
   pthread_mutex_init(&mutex_acceso, NULL);
-
   pthread_attr_init(&attr);
+
+  // Reset found to false before starting threads
+  atomic_store(&found, false);
 
   for (int i = 0; i < NUM_THREADS; i++) {
     thread_args[i].argv = argv;
@@ -38,6 +40,9 @@ int semaforo(char *argv[]) {
   for (int i = 0; i < NUM_THREADS; i++) {
     pthread_join(threads[i], NULL);
   }
+
+  // Reset found to false after all threads have joined
+  atomic_store(&found, false);
 
   pthread_mutex_destroy(&mutex_acceso);
 
