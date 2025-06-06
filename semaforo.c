@@ -6,9 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-const long long CHARSET_SIZE = 52; // a-z, A-Z
+const long long CHARSET_SIZE = 52;
 
-// ***** THIS IS THE CORRECTED FUNCTION *****
 void index_to_breakpoint(long long index, int *bp) {
   long long len1_count = CHARSET_SIZE;
   long long len2_count = CHARSET_SIZE * CHARSET_SIZE;
@@ -21,14 +20,14 @@ void index_to_breakpoint(long long index, int *bp) {
   memset(bp, 0, sizeof(int) * 4);
   long long relative_index;
 
-  if (index < cumm_len1) { // 1-character password
+  if (index < cumm_len1) {
     relative_index = index;
     bp[0] = (int)relative_index;
-  } else if (index < cumm_len2) { // 2-character password
+  } else if (index < cumm_len2) {
     relative_index = index - cumm_len1;
     bp[0] = (int)(relative_index % CHARSET_SIZE);
     bp[1] = (int)(relative_index / CHARSET_SIZE);
-  } else if (index < cumm_len3) { // 3-character password
+  } else if (index < cumm_len3) {
     relative_index = index - cumm_len2;
     bp[0] = (int)(relative_index % CHARSET_SIZE);
     long long temp = relative_index / CHARSET_SIZE;
@@ -53,9 +52,6 @@ void calculate_and_set_breakpoints(ThreadArgs *thread_args, int num_threads) {
   long long total_combinations = c1 + c2 + c3 + c4;
 
   long long batch_size = total_combinations / num_threads;
-
-  printf("Total combinations: %lld\n", total_combinations);
-  printf("Batch size per thread: %lld\n\n", batch_size);
 
   for (int i = 0; i < num_threads; i++) {
     long long start_index = i * batch_size;
