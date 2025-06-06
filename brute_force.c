@@ -13,7 +13,7 @@ atomic_bool found = ATOMIC_VAR_INIT(false);
 void save_password(const char *username, const char *password) {
   FILE *file = fopen("passwords_found.txt", "a");
   if (file) {
-    fprintf(file, "%s %s\n", username, password);
+    fprintf(file, "%s\t%s\n", username, password);
     fclose(file);
   } else {
     perror("Error opening passwords_found.txt");

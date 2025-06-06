@@ -95,7 +95,7 @@ int semaforo(char *argv[], int num_threads) {
     thread_args[i].argv = &argv[1];
     strncpy(thread_args[i].username, username,
             sizeof(thread_args[i].username) - 1);
-    thread_args[i].username[sizeof(thread_args[i].username) - 1] = '\0';
+    // thread_args[i].username[sizeof(thread_args[i].username) - 1] = '\0';
 
     if (pthread_create(&threads[i], &attr, brute_force,
                        (void *)&thread_args[i])) {
